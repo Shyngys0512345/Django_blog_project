@@ -3,12 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required 
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
 from .models import Profile
-from .forms import UserUpdateForm, ProfileUpdateForm
-
 
 def register(request):
     if request.method == "POST":
@@ -28,7 +23,7 @@ def profile(request):
     return render(request, 'user/profile.html')
    
 
-
+@login_required
 def profile_update(request):
     # Ensure the profile exists or create one
     try:

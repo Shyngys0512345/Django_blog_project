@@ -25,7 +25,6 @@
             <div class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
               <a class="nav-item nav-link" href="{% url 'blog-home' %}">HOME</a>
-              <a class="nav-item nav-link" href="{% url 'blog-about' %}">ABOUT</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
@@ -34,6 +33,13 @@
               <!-- <button class="noselect">Create Post</button> -->
                
             <!-- <h3 style="color: white">{{request.user}}</h3> -->
+            <a href="{% url 'blog-new' %}" id="auth-links">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              Create Post
+            </a>
             <a href="{% url 'profile' %}" id="auth-links">
               <span></span>
               <span></span>
@@ -98,10 +104,7 @@
         <footer class="" >
           <ul class="nav justify-content-center border-bottom"  style="margin-top: 60px;">
             <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
             <li class="nav-item"><a href="admin/" class="nav-link px-2 text-muted">Admin</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
           </ul>
           <p class="text-center text-muted">&copy; Shyngys 2024</p>
         </footer>
