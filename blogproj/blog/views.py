@@ -4,6 +4,7 @@ from .models import Post, Comment
 from .forms import CommentForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.paginator import Paginator
 
 class PostListView(LoginRequiredMixin, ListView):
     model = Post 
@@ -58,3 +59,16 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
+
+class PostListView(LoginRequiredMixin, ListView):
+    model = Post 
+    template_name = 'blog/home.html'  
+    context_object_name = 'posts' 
+    ordering = ["-date_posted"]  
+    paginate_by = 5  
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page_obj = context['page_obj']  
+        return context
