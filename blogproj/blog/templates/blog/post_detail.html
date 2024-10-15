@@ -1,23 +1,49 @@
 {% extends 'blog/base.html' %}
+
 {% block content %}
-    
-        <article class="media content-section">
-            <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="">
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted }}</small>
+            {% if object.author == user %}
+                <div>
+                    <a class="btn btn-outline-success" href="{% url 'blog-update' object.id %}">Update</a>
+                    <a class="btn btn-outline-danger" href="{% url 'blog-delete' object.id %}">Delete</a>
+                </div>
+            {% endif %}
+        </div>
+        <h2><a class="article-title" href="#">{{ object.title }}</a></h2>
+        <p class="article-content">{{ object.content }}</p>
+    </div>
+    <br>
+</article>
+
+<div class="comments-section">
+    <h3 style="color: white;">Comments</h3>
+    {% for comment in comments %}
+        <div class="media content-section">
+            <img class="rounded-circle article-img" src="{{ comment.author.profile.image.url }}" alt="">
             <div class="media-body">
-              <div class="article-metadata">
-                <a class="mr-2" href="#">{{ object.author }}</a>
-                <small class="text-muted">{{ object.date_posted }}</small> <br>
-                  {% if object.author == user %}
-                    <div>
-                        <a class="btn btn-outline-success" href="{% url 'blog-update' object.id %}">Update</a>
-                        <a class="btn btn-outline-danger" href="{% url 'blog-delete' object.id %}">Delete</a>
-                    </div>
-                  {% endif %}
-              </div>
-              <h2><a class="article-title" href="#">{{ object.title }}</a></h2>
-              <p class="article-content">{{ object.content }}</p>
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ comment.author }}</a>
+                    <small class="text-muted">{{ comment.created_at }}</small>
+                </div>
+                <p class="article-content">{{ comment.content }}</p>
             </div>
-            <br>
-          </article>
+        </div>
+        <br>
+    {% empty %}
+        <p style="color: white;">There are no comments yet.</p>
+    {% endfor %}
     
+    <h3 style="color: white;">Add a comment</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+
 {% endblock content %}
