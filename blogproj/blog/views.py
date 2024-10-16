@@ -5,20 +5,36 @@ from .forms import CommentForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
+from django.db.models import Q  # Import Q here
 
 class PostListView(LoginRequiredMixin, ListView):
     model = Post 
-    template_name = 'blog/home.html'  # Имя шаблона для списка постов
+    template_name = 'blog/home.html'  
     context_object_name = 'posts' 
-    ordering = ["-date_posted"]  # Сортировка по дате
+    ordering = ["-date_posted"]  
+    paginate_by = 5  
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)  # Use Q directly
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_obj'] = context['page_obj']
+        return context
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = self.object.comments.all()  # Получение комментариев для поста
-        context['form'] = CommentForm()  # Создание формы для комментариев
+        context['comments'] = self.object.comments.all() 
+        context['form'] = CommentForm()  
         return context
 
     def post(self, request, *args, **kwargs):
@@ -59,16 +75,3 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
-
-
-class PostListView(LoginRequiredMixin, ListView):
-    model = Post 
-    template_name = 'blog/home.html'  
-    context_object_name = 'posts' 
-    ordering = ["-date_posted"]  
-    paginate_by = 5  
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        page_obj = context['page_obj']  
-        return context

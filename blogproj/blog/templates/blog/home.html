@@ -1,38 +1,57 @@
-{% extends 'blog/base.html' %}
+{% extends 'blog/base.html' %}  <!-- Наследуем базовый шаблон -->
 
 {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
-            <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="#">{{ post.author }}</a>
-                    <small class="text-muted">{{ post.date_posted }}</small>
+    <div class="container mt-5">
+        <form method="GET" action="" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" placeholder="Search posts..." 
+                       value="{{ request.GET.q }}" 
+                       class="form-control">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
                 </div>
-                <h2><a class="article-title" href="{% url 'blog-detail' post.id %}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.content }}</p>
             </div>
-            <br>
-        </article>
-    {% empty %}
-        <p>No posts available.</p>
-    {% endfor %}
-    
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-            {% endif %}
+        </form>
 
-            <span class="current text-white">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        {% for post in posts %}
+            <article class="media content-section">
+                <img class="rounded-circle article-img" 
+                     src="{{ post.author.profile.image.url }}" 
+                     alt="{{ post.author }}" width="50" height="50">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="#">{{ post.author }}</a>
+                        <small class="text-muted">{{ post.date_posted }}</small>
+                    </div>
+                    <h2>
+                        <a class="article-title" href="{% url 'blog-detail' post.id %}">
+                            {{ post.title }}
+                        </a>
+                    </h2>
+                    <p class="article-content">{{ post.content }}</p>
+                </div>
+            </article>
+            <hr>
+        {% empty %}
+            <p>No posts available.</p>
+        {% endfor %}
+
+        <div class="pagination mt-4">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
             </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
+        </div>
     </div>
 {% endblock content %}
